@@ -23,14 +23,17 @@ window.onload = function() {
 		'img/wolf_ear_left.png',
 		'img/wolf_ear_right.png',
 		'img/wolf_tail.png',
-		'img/wolf_drool.png'
+		'img/wolf_drool.png',
+		'img/background.png'
 	];
 	for(var i = 0; i < files.length; i++) {
 		game.preload(files[i]);
 	}
 	
 	game.onload = function() {
-		game.rootScene.backgroundColor = 'green';
+		var background = new Sprite(game.width, game.height);
+		background.image = game.assets['img/background.png'];
+		game.rootScene.addChild(background);
 		
 		// 鳴き声ボタン
 //		var callButton = new CallButton();
