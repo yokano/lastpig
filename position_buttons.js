@@ -9,13 +9,21 @@ var PositionButton = Class.create(Sprite, {
 	},
 	
 	ontouchstart: function() {
+		var house = game.houses[this.direction];
 		this.y += 5;
 		this.image = game.assets['img/' + this.direction + '_button_down.png'];
-		game.houses[this.direction].hasPig = true;
+		
+		var pig = new Pig();
+		game.currentScene.insertBefore(pig, house);
+		pig.x = house.x + house.width / 2 - pig.width / 2;
+		pig.y = house.y + house.height / 2 - pig.height / 2;
+		pig.visible = true;
+		house.hasPig = true;
 	},
 	
 	ontouchend: function() {
 		this.y -= 5;
 		this.image = game.assets['img/' + this.direction + '_button.png'];
+		game.state.exit();
 	}
 });
