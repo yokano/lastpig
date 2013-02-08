@@ -4,16 +4,30 @@ var game;
 window.onload = function() {
 	game = new Game(innerWidth, innerHeight);
 	
-	game.preload('img/call_button.png');
-	game.preload('img/call_button_down.png');
-	game.preload('img/house.png');
-	game.preload('sound/se4.mp3');
-	game.preload('img/left_button.png');
-	game.preload('img/center_button.png');
-	game.preload('img/right_button.png');
-	game.preload('img/left_button_down.png');
-	game.preload('img/center_button_down.png');
-	game.preload('img/right_button_down.png');
+	var files = [
+		'img/call_button.png',
+		'img/call_button_down.png',
+		'img/house.png',
+		'sound/se4.mp3',
+		'img/left_button.png',
+		'img/center_button.png',
+		'img/right_button.png',
+		'img/left_button_down.png',
+		'img/center_button_down.png',
+		'img/right_button_down.png',
+		'img/wolf_body.png',
+		'img/wolf_brow_left.png',
+		'img/wolf_brow_right.png',
+		'img/wolf_arm_left.png',
+		'img/wolf_arm_right.png',
+		'img/wolf_ear_left.png',
+		'img/wolf_ear_right.png',
+		'img/wolf_tail.png',
+		'img/wolf_drool.png'
+	];
+	for(var i = 0; i < files.length; i++) {
+		game.preload(files[i]);
+	}
 	
 	game.onload = function() {
 		game.rootScene.backgroundColor = 'green';
@@ -43,7 +57,7 @@ window.onload = function() {
 		var leftButton = new PositionButton('left');
 		leftButton.x = 50;
 		game.rootScene.addChild(leftButton);
-		
+
 		var centerButton = new PositionButton('center');
 		centerButton.x = 200;
 		game.rootScene.addChild(centerButton);
@@ -51,6 +65,10 @@ window.onload = function() {
 		var rightButton = new PositionButton('right');
 		rightButton.x = 350;
 		game.rootScene.addChild(rightButton);
+		
+		// 狼
+		var wolf = new Wolf();
+		game.rootScene.addChild(wolf);
 	};
 	game.start();
 };
