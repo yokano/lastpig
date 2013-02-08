@@ -8,6 +8,9 @@ window.onload = function() {
 
 var Game = Class.create(Core, {
 	state: null,
+	pig: null,
+	answer: '',
+	wolf: null,
 	
 	initialize: function(width, height) {
 		Core.call(this, width, height);
@@ -32,7 +35,8 @@ var Game = Class.create(Core, {
 			'img/wolf_tail.png',
 			'img/wolf_drool.png',
 			'img/background.png',
-			'img/pig.png'
+			'img/pig.png',
+			'img/title_background.png'
 		];
 		for(var i = 0; i < files.length; i++) {
 			this.preload(files[i]);
@@ -55,11 +59,25 @@ var Game = Class.create(Core, {
 });
 
 var TitleState = Class.create({
+	_background: null,
 	enter: function() {
-		this.exit();
+		var self = this;
+		var background = new Sprite(424, 536);
+		background.x = game.width / 2 - background.width / 2;
+		background.y = game.height / 2 - background.height / 2;
+		background.image = game.assets['img/title_background.png'];
+		background.ontouchstart = function() {
+			self.exit();
+		};
+		this._background = background;
+		game.currentScene.addChild(this._background);
 	},
 	
 	exit: function() {
+		this._background.ontouchstart = function() {};
+		this._background.tl.fadeTo(0, game.fps / 2).then(function() {
+			game.currentScene.removeChild(this);
+		});
 		game.changeState(SetPositionState);
 	}
 });
@@ -74,17 +92,17 @@ var SetPositionState = Class.create({
 		
 		// 家
 		game.houses = {};
-		game.houses.left = new House();
+		game.houses.left = new House('left');
 		game.houses.left.x = 0;
 		game.houses.left.y = 150;
 		game.rootScene.addChild(game.houses.left);
 		
-		game.houses.center = new House();
+		game.houses.center = new House('center');
 		game.houses.center.x = 250;
 		game.houses.center.y = 150;
 		game.rootScene.addChild(game.houses.center);
 		
-		game.houses.right = new House();
+		game.houses.right = new House('right');
 		game.houses.right.x = 500;
 		game.houses.right.y = 150;
 		game.rootScene.addChild(game.houses.right);
@@ -114,6 +132,7 @@ var SetPositionState = Class.create({
 		// 狼
 		var wolf = new Wolf();
 		game.rootScene.addChild(wolf);
+		game.wolf = wolf;
 	},
 	
 	exit: function() {
@@ -125,32 +144,77 @@ var SetPositionState = Class.create({
 });
 
 var CheckPositionState = Class.create({
+	checkedCount: 0,
+	_callButton: null,
 	enter: function() {
 		var callButton = new CallButton();
 		game.rootScene.addChild(callButton);
+		this._callButton = callButton;
+		
+		this.checkedCount = 0;
+		this.startCheck();
+	},
+	
+	startCheck: function() {
+		for(var i = 0; i < 3; i++) {
+			var direction = ['left', 'center', 'right'][i];
+			game.houses[direction].checkable = true;
+		}
+	},
+	
+	checked: function() {
+		this.checkedCount++;
+		if(this.checkedCount >= config.checkLimit) {
+			this.exit();
+		}
 	},
 	
 	exit: function() {
-	
+		for(var direction in game.houses) {
+			game.houses[direction].checkable = false;
+		}
+		game.currentScene.removeChild(this._callButton);
+		game.changeState(OpenState);
 	}
 });
 
 var OpenState = Class.create({
 	enter: function() {
+		for(var direction in game.houses) {
+			game.houses[direction].openable = true;
+		}
+	},
 	
+	hasOpend: function(answer) {
+		game.answer = answer;
+		for(var direction in game.houses) {
+			game.houses[direction].openable = false;
+		}
+		this.exit();
 	},
 	
 	exit: function() {
-	
+		game.changeState(ResultState);
 	}
 });
 
 var ResultState = Class.create({
 	enter: function() {
-	
+		if(game.answer == game.pig.direction) {
+			console.log('オオカミの勝ち');
+		} else {
+			console.log('ブタの勝ち');
+		}
+		this.exit();
 	},
 	
 	exit: function() {
-	
+		game.currentScene.tl.delay(game.fps * 2).then(function() {
+			game.currentScene.removeChild(game.wolf);
+			for(var direction in game.houses) {
+				game.currentScene.removeChild(game.houses[direction]);
+			}
+			game.changeState(TitleState);
+		});
 	}
 });
