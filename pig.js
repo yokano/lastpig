@@ -4,7 +4,10 @@ var Pig = Class.create(Group, {
 		this.width = 320;
 		this.height = 232;
 		this.x = game.width / 2 - this.width / 2;
-		this.y = game.height - this.height;
+		this.y = game.height - this.height + 10;
+		this.originY = this.height;
+		this.rotation = -2.5;
+		this.tl.rotateBy(5, game.fps, QUAD_EASEINOUT).rotateBy(-5, game.fps, QUAD_EASEINOUT).loop();
 		
 		// 体
 		var body = new Sprite(187, 180);
@@ -25,6 +28,9 @@ var Pig = Class.create(Group, {
 		leftEar.image = game.assets['img/pig_left_ear.png'];
 		leftEar.x = -40;
 		leftEar.y = -50;
+		leftEar.originX = 100;
+		leftEar.originY = 68;
+		leftEar.tl.rotateBy(-10, game.fps, CUBIC_EASEIN).rotateBy(10, game.fps, CUBIC_EASEOUT).loop();
 		this.insertBefore(leftEar, head);
 		
 		// 右耳
@@ -32,6 +38,9 @@ var Pig = Class.create(Group, {
 		rightEar.image = game.assets['img/pig_right_ear.png'];
 		rightEar.x = 160;
 		rightEar.y = -50;
+		rightEar.originX = 0;
+		rightEar.originY = 68;
+		rightEar.tl.rotateBy(10, game.fps, CUBIC_EASEIN).rotateBy(-10, game.fps, CUBIC_EASEOUT).loop();
 		this.insertBefore(rightEar, head);
 		
 		// 左目
@@ -51,6 +60,8 @@ var Pig = Class.create(Group, {
 		leftHand.image = game.assets['img/pig_left_hand.png'];
 		leftHand.x = -30;
 		leftHand.y = 100;
+		leftHand.originX = 85;
+		leftHand.tl.rotateBy(-45, game.fps, CIRC_EASEINOUT).rotateBy(45, game.fps, CIRC_EASEINOUT).loop();
 		this.insertBefore(leftHand, body);
 		
 		// 右手
@@ -58,6 +69,8 @@ var Pig = Class.create(Group, {
 		rightHand.image = game.assets['img/pig_right_hand.png'];
 		rightHand.x = 170;
 		rightHand.y = 100;
+		rightHand.originX = 0;
+		rightHand.tl.rotateBy(45, game.fps, CIRC_EASEINOUT).rotateBy(-45, game.fps, CIRC_EASEINOUT).loop();
 		this.insertBefore(rightHand, body);
 		
 		// 鼻
@@ -72,6 +85,10 @@ var Pig = Class.create(Group, {
 		tail.image = game.assets['img/pig_tail.png'];
 		tail.x = 190;
 		tail.y = 145;
-		this.insertBefore(tail, body);
+		tail.originX = 0;
+		tail.originY = 80;
+		tail.rotation = 10;
+		tail.tl.rotateBy(-35, game.fps, BOUNCE_EASEIN).rotateBy(35, game.fps, BOUNCE_EASEOUT).loop();
+		this.insertBefore(tail, rightHand);
 	}
 });
