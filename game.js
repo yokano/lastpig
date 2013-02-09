@@ -34,9 +34,19 @@ var Game = Class.create(Core, {
 			'img/wolf_ear_right.png',
 			'img/wolf_tail.png',
 			'img/wolf_drool.png',
+			'img/wolf_nose.png',
 			'img/background.png',
-			'img/pig.png',
-			'img/title_background.png'
+			'img/mini_pig.png',
+			'img/title_background.png',
+			'img/pig_body.png',
+			'img/pig_head.png',
+			'img/pig_nose.png',
+			'img/pig_eye.png',
+			'img/pig_left_ear.png',
+			'img/pig_right_ear.png',
+			'img/pig_left_hand.png',
+			'img/pig_right_hand.png',
+			'img/pig_tail.png'
 		];
 		for(var i = 0; i < files.length; i++) {
 			this.preload(files[i]);
@@ -130,9 +140,13 @@ var SetPositionState = Class.create({
 		this._rightButton = rightButton;
 		
 		// 狼
-		var wolf = new Wolf();
-		game.rootScene.addChild(wolf);
-		game.wolf = wolf;
+//		var wolf = new Wolf();
+//		game.rootScene.addChild(wolf);
+//		game.wolf = wolf;
+
+		// 豚
+		var pig = new Pig();
+		game.currentScene.addChild(pig);
 	},
 	
 	exit: function() {

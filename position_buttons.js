@@ -13,7 +13,7 @@ var PositionButton = Class.create(Sprite, {
 		this.y += 5;
 		this.image = game.assets['img/' + this.direction + '_button_down.png'];
 		
-		var pig = new Pig(this.direction);
+		var pig = new MiniPig(this.direction);
 		game.currentScene.insertBefore(pig, house);
 		pig.x = house.x + house.width / 2 - pig.width / 2;
 		pig.y = house.y + house.height / 2 - pig.height / 2;

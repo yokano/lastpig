@@ -114,6 +114,14 @@ var Wolf = Class.create(Group, {
 		this.addChild(browRight);
 		this._browRight = browRight;
 		
+		// 鼻
+		var nose = new Sprite(49, 29);
+		nose.image = game.assets['img/wolf_nose.png'];
+		nose.x = 90;
+		nose.y = 90;
+		nose.tl.scaleTo(1.1, game.fps / 10).scaleTo(1, game.fps / 10).delay(game.fps * 2).loop();
+		this.addChild(nose);
+		
 		// よだれ
 		var drool = new Sprite(33, 53);
 		drool.getRandomizedX = function() {
