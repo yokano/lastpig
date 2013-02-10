@@ -26,12 +26,12 @@ var Game = Class.create(Core, {
 			'img/center_button_down.png',
 			'img/right_button_down.png',
 			'img/wolf_body.png',
-			'img/wolf_brow_left.png',
-			'img/wolf_brow_right.png',
-			'img/wolf_arm_left.png',
-			'img/wolf_arm_right.png',
-			'img/wolf_ear_left.png',
-			'img/wolf_ear_right.png',
+			'img/wolf_left_brow.png',
+			'img/wolf_right_brow.png',
+			'img/wolf_left_arm.png',
+			'img/wolf_right_arm.png',
+			'img/wolf_left_ear.png',
+			'img/wolf_right_ear.png',
 			'img/wolf_tail.png',
 			'img/wolf_drool.png',
 			'img/wolf_nose.png',
@@ -71,8 +71,22 @@ var Game = Class.create(Core, {
 var TitleState = Class.create({
 	_background: null,
 	enter: function() {
+	
+		// 狼
+		var wolf = new Wolf();
+		game.rootScene.addChild(wolf);
+		game.wolf = wolf;
+
+		// 豚
+		if(game.pig == null) {
+			var pig = new Pig();
+			game.currentScene.addChild(pig);
+			game.pig = pig;
+		}
+	
+		// タイトルロゴ
 		var self = this;
-		var background = new Sprite(424, 536);
+		var background = new Sprite(743, 277);
 		background.x = game.width / 2 - background.width / 2;
 		background.y = game.height / 2 - background.height / 2;
 		background.image = game.assets['img/title_background.png'];
@@ -104,17 +118,17 @@ var SetPositionState = Class.create({
 		game.houses = {};
 		game.houses.left = new House('left');
 		game.houses.left.x = 0;
-		game.houses.left.y = 150;
+		game.houses.left.y = game.height / 2 - game.houses.left.height / 2;
 		game.rootScene.addChild(game.houses.left);
 		
 		game.houses.center = new House('center');
 		game.houses.center.x = 250;
-		game.houses.center.y = 150;
+		game.houses.center.y = game.height / 2 - game.houses.center.height / 2;
 		game.rootScene.addChild(game.houses.center);
 		
 		game.houses.right = new House('right');
 		game.houses.right.x = 500;
-		game.houses.right.y = 150;
+		game.houses.right.y = game.height / 2 - game.houses.right.height / 2;
 		game.rootScene.addChild(game.houses.right);
 				
 		// 位置ボタン
@@ -138,15 +152,6 @@ var SetPositionState = Class.create({
 		rightButton.tl.moveBy(0, rightButton.height, game.fps);
 		game.rootScene.addChild(rightButton);
 		this._rightButton = rightButton;
-		
-		// 狼
-//		var wolf = new Wolf();
-//		game.rootScene.addChild(wolf);
-//		game.wolf = wolf;
-
-		// 豚
-		var pig = new Pig();
-		game.currentScene.addChild(pig);
 	},
 	
 	exit: function() {
@@ -225,6 +230,7 @@ var ResultState = Class.create({
 	exit: function() {
 		game.currentScene.tl.delay(game.fps * 2).then(function() {
 			game.currentScene.removeChild(game.wolf);
+			game.currentScene.removeChild(game.pig);
 			for(var direction in game.houses) {
 				game.currentScene.removeChild(game.houses[direction]);
 			}

@@ -26,22 +26,22 @@ var Wolf = Class.create(Group, {
 		this.setAnimation(this._lowTensionSpeed);
 				
 		// 体
-		var body = new Sprite(232, 270);
+		var body = new Sprite(279, 324);
 		body.image = game.assets['img/wolf_body.png'];
 		this.addChild(body);
 		
 		// 左耳
-		var earLeft = new Sprite(90, 129);
-		earLeft.image = game.assets['img/wolf_ear_left.png'];
-		earLeft.x = -30;
+		var earLeft = new Sprite(107, 155);
+		earLeft.image = game.assets['img/wolf_left_ear.png'];
+		earLeft.x = -20;
 		earLeft.y = -15;
 		earLeft.rotate(-15);
 		earLeft.tl.rotateBy(15, game.fps * 3).rotateBy(-15, game.fps * 3).loop();
 		this.insertBefore(earLeft, body);
 		
 		// 右耳
-		var earRight = new Sprite(89, 129);
-		earRight.image = game.assets['img/wolf_ear_right.png'];
+		var earRight = new Sprite(107, 155);
+		earRight.image = game.assets['img/wolf_right_ear.png'];
 		earRight.x = 180;
 		earRight.y = -15;
 		earRight.rotate(15);
@@ -49,10 +49,10 @@ var Wolf = Class.create(Group, {
 		this.insertBefore(earRight, body);
 		
 		// 尻尾
-		var tail = new Sprite(212, 163);
+		var tail = new Sprite(254, 195);
 		tail.image = game.assets['img/wolf_tail.png'];
 		tail.x = 200;
-		tail.y = 90;
+		tail.y = 80;
 		tail.originX = 40;
 		tail.originY = 150;
 		tail.setAnimation = function(time) {
@@ -65,12 +65,12 @@ var Wolf = Class.create(Group, {
 		this._tail = tail;
 		
 		// 左腕
-		var armLeft = new Sprite(128, 90);
-		armLeft.image = game.assets['img/wolf_arm_left.png'];
-		armLeft.x = -110;
+		var armLeft = new Sprite(154, 108);
+		armLeft.image = game.assets['img/wolf_left_arm.png'];
+		armLeft.x = -100;
 		armLeft.y = 80;
-		armLeft.originX = 110;
-		armLeft.originY = 80;
+		armLeft.originX = armLeft.width;
+		armLeft.originY = armLeft.height;
 		armLeft.setAnimation = function(time) {
 			this.tl.clear();
 			this.rotation = -30;
@@ -81,12 +81,12 @@ var Wolf = Class.create(Group, {
 		this._armLeft = armLeft;
 		
 		// 右腕
-		var armRight = new Sprite(133, 94);
-		armRight.image = game.assets['img/wolf_arm_right.png'];
-		armRight.x = 210;
+		var armRight = new Sprite(159, 113);
+		armRight.image = game.assets['img/wolf_right_arm.png'];
+		armRight.x = 220;
 		armRight.y = 80;
 		armRight.originX = 0;
-		armRight.originY = 80;
+		armRight.originY = armRight.height;
 		armRight.setAnimation = function(time) {
 			this.tl.clear();
 			this.rotation = 35;
@@ -97,39 +97,39 @@ var Wolf = Class.create(Group, {
 		this._armRight = armRight;
 		
 		// 左眉毛
-		var browLeft = new Sprite(49, 29);
-		browLeft.image = game.assets['img/wolf_brow_left.png'];
-		browLeft.x = 50;
-		browLeft.y = 35;
+		var browLeft = new Sprite(58, 35);
+		browLeft.image = game.assets['img/wolf_left_brow.png'];
+		browLeft.x = 60;
+		browLeft.y = 45;
 		browLeft.tl.moveBy(0, -5, game.fps / 3, QUART_EASEIN).moveBy(0, 5, game.fps, QUART_EASEOUT).loop();
 		this.addChild(browLeft);
 		this._browLeft = browLeft;
 
 		// 右眉毛
-		var browRight = new Sprite(49, 29);
-		browRight.image = game.assets['img/wolf_brow_right.png'];
-		browRight.x = 130;
-		browRight.y = 35;
+		var browRight = new Sprite(58, 35);
+		browRight.image = game.assets['img/wolf_right_brow.png'];
+		browRight.x = 155;
+		browRight.y = 45;
 		browRight.tl.moveBy(0, -5, game.fps / 3, QUART_EASEIN).moveBy(0, 5, game.fps, QUART_EASEOUT).loop();
 		this.addChild(browRight);
 		this._browRight = browRight;
 		
 		// 鼻
-		var nose = new Sprite(49, 29);
+		var nose = new Sprite(64, 36);
 		nose.image = game.assets['img/wolf_nose.png'];
-		nose.x = 90;
-		nose.y = 90;
+		nose.x = 105;
+		nose.y = 110;
 		nose.tl.scaleTo(1.1, game.fps / 10).scaleTo(1, game.fps / 10).delay(game.fps * 2).loop();
 		this.addChild(nose);
 		
 		// よだれ
-		var drool = new Sprite(33, 53);
+		var drool = new Sprite(39, 63);
 		drool.getRandomizedX = function() {
-			return Math.floor(Math.random() * 90 + 50);
+			return Math.floor(Math.random() * 100 + 70);
 		};
 		drool.image = game.assets['img/wolf_drool.png'];
 		drool.x = drool.getRandomizedX();
-		drool.y = 175;
+		drool.y = 200;
 		drool.originY = 0;
 		drool.scaleY = 0;
 
@@ -142,7 +142,7 @@ var Wolf = Class.create(Group, {
 			.scaleTo(1, 0, 0)
 			.then(function() {
 				drool.x = drool.getRandomizedX();
-				drool.y = 175;
+				drool.y = 200;
 			})
 			.show()
 			.loop();
