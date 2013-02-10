@@ -6,14 +6,32 @@ window.onload = function() {
 	game.start();
 };
 
+/**
+ * ゲーム管理クラス
+ * Stateを切り替えながらゲームを進める
+ * @class
+ * @property {State} state 現在のステート
+ * @property {Pig} pig 画面上の豚
+ * @property {String} answer オオカミが選んだ家(left/center/right)
+ * @property {Wolf} wolf 画面下のオオカミ
+ */
 var Game = Class.create(Core, {
 	state: null,
 	pig: null,
 	answer: '',
 	wolf: null,
 	
+	/**
+	 * コンストラクタ
+	 * @function
+	 * @memberOf Game
+	 * @param {数値} width ゲームの幅
+	 * @param {数値} height ゲームの高さ
+	 */
 	initialize: function(width, height) {
 		Core.call(this, width, height);
+		
+		// ファイルのプリロード
 		var files = [
 			'img/call_button.png',
 			'img/call_button_down.png',
@@ -53,6 +71,11 @@ var Game = Class.create(Core, {
 		}
 	},
 	
+	/**
+	 * ゲームの読み込みが完了した直後の処理
+	 * @function
+	 * @memberOf Game
+	 */
 	onload: function() {
 		var background = new Sprite(this.width, this.height);
 		background.image = this.assets['img/background.png'];
@@ -62,14 +85,31 @@ var Game = Class.create(Core, {
 		this.state.enter();
 	},
 	
+	/**
+	 * ゲームステートの切り替え
+	 * @function
+	 * @memberOf Game
+	 */
 	changeState: function(state) {
 		this.state = new state();
 		this.state.enter();
 	}
 });
 
+/**
+ * タイトルステート
+ * タイトル画面を表示する
+ * @class
+ * @property {Sprite} _background 背景画像
+ */
 var TitleState = Class.create({
 	_background: null,
+	
+	/**
+	 * ステートが適用された直後の処理
+	 * @function
+	 * @memberOf TitleState
+	 */
 	enter: function() {
 	
 		// 狼
@@ -97,6 +137,11 @@ var TitleState = Class.create({
 		game.currentScene.addChild(this._background);
 	},
 	
+	/**
+	 * 別のステートへ切り替わる直前の処理
+	 * @function
+	 * @memberOf TitleState
+	 */
 	exit: function() {
 		this._background.ontouchstart = function() {};
 		this._background.tl.fadeTo(0, game.fps / 2).then(function() {
@@ -106,31 +151,40 @@ var TitleState = Class.create({
 	}
 });
 
+/**
+ * 豚の隠れ場所を入力するステート
+ * @class
+ * @property {Sprite} _leftButton 左矢印ボタン
+ * @property {Sprite} _centerButton 中央矢印ボタン
+ * @property {Sprite} _rightButton 右矢印ボタン
+ * @property {String} selected 豚プレイヤーが選んだ隠れ場所の方向(left/center/right)
+ */
 var SetPositionState = Class.create({
 	_leftButton: null,
 	_centerButton: null,
 	_rightButton: null,
 	selected: false,
+	
+	/**
+	 * ステートに入った直後の処理
+	 * @function
+	 * @memberOf SetPositionState
+	 */
 	enter: function() {
 		this.selected = false;
 		
 		// 家
 		game.houses = {};
-		game.houses.left = new House('left');
-		game.houses.left.x = 0;
-		game.houses.left.y = game.height / 2 - game.houses.left.height / 2;
-		game.rootScene.addChild(game.houses.left);
+		var directions = ['left', 'center', 'right'];
+		for(var i = 0; i < 3; i++) {
+			var direction = directions[i];
+			game.houses[direction] = new House(direction);
+			var margin = (game.width - 3 * game.houses[direction].width) / 4;
+			game.houses[direction].x = (i + 1) * margin + i * game.houses[direction].width;
+			game.houses[direction].y = game.height / 2 - game.houses[direction].height / 2;
+			game.currentScene.addChild(game.houses[direction]);
+		}
 		
-		game.houses.center = new House('center');
-		game.houses.center.x = 250;
-		game.houses.center.y = game.height / 2 - game.houses.center.height / 2;
-		game.rootScene.addChild(game.houses.center);
-		
-		game.houses.right = new House('right');
-		game.houses.right.x = 500;
-		game.houses.right.y = game.height / 2 - game.houses.right.height / 2;
-		game.rootScene.addChild(game.houses.right);
-				
 		// 位置ボタン
 		var leftButton = new PositionButton('left');
 		leftButton.x = 50;

@@ -6,8 +6,8 @@ var House = Class.create(Sprite, {
 	
 	initialize: function(direction) {
 		Sprite.call(this);
-		this.width = 237;
-		this.height = 230;
+		this.width = 273;
+		this.height = 236;
 		this.image = game.assets['img/house.png'];
 		this.direction = direction;
 	},
