@@ -120,7 +120,7 @@ var TitleState = Class.create({
 		game.wolf = wolf;
 
 		// 豚
-		if(game.pig == null) {
+		if(game.pig == null || game.pig == undefined) {
 			var pig = new Pig();
 			game.currentScene.addChild(pig);
 			game.pig = pig;
@@ -171,7 +171,6 @@ var SetPositionState = Class.create({
 	enter: function() {
 		this.selected = false;
 		this._positionButtons = {};
-		
 		game.pig.hide();
 		
 		// 家
@@ -192,7 +191,7 @@ var SetPositionState = Class.create({
 			var button = new PositionButton(direction);
 			button.x = (game.width - 3 * button.width) / 2 + button.width * i;
 			button.y = -button.height;
-			button.tl.moveBy(0, button.height + 10, game.fps / 2);
+			button.tl.moveBy(0, button.height + 20, game.fps / 2);
 			game.rootScene.addChild(button);
 			this._positionButtons[direction] = button;
 		}
