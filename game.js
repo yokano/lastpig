@@ -171,6 +171,8 @@ var SetPositionState = Class.create({
 		this.selected = false;
 		this._positionButtons = {};
 		
+		game.pig.hide();
+		
 		// 家
 		game.houses = {};
 		var directions = ['left', 'center', 'right'];
@@ -188,7 +190,8 @@ var SetPositionState = Class.create({
 			var direction = directions[i];
 			var button = new PositionButton(direction);
 			button.x = (game.width - 3 * button.width) / 2 + button.width * i;
-			button.y = button.height;
+			button.y = -button.height;
+			button.tl.moveBy(0, button.height + 10, game.fps / 2);
 			game.rootScene.addChild(button);
 			this._positionButtons[direction] = button;
 		}

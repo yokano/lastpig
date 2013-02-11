@@ -104,5 +104,22 @@ var Pig = Class.create(Group, {
 		
 		// 豚を半回転
 		this.rotation += 180;
+	},
+	
+	/**
+	 * 画面外に隠れる
+	 * @function
+	 * @memberOf Pig
+	 */
+	hide: function() {
+		this.tl.clear().unloop().moveBy(0, -this.height - 40, game.fps / 5);
+	},
+	
+	/**
+	 * 画面内に現れる
+	 * @function
+	 * @memberOf Pig
+	 */
+	show: function() {
 	}
 });
