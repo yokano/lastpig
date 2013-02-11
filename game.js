@@ -30,6 +30,7 @@ var Game = Class.create(Core, {
 	 */
 	initialize: function(width, height) {
 		Core.call(this, width, height);
+		this.loadingScene.backgroundColor = 'green';
 		
 		// ファイルのプリロード
 		var files = [
