@@ -211,11 +211,13 @@ var TitleState = Class.create({
 		background.x = game.width / 2 - background.width / 2;
 		background.y = game.height / 2 - background.height / 2;
 		background.image = game.assets['img/title_background.png'];
-		background.ontouchstart = function() {
-			self.exit();
-		};
 		this._background = background;
 		game.currentScene.addChild(this._background);
+		
+		// タッチしたらゲーム開始
+		game.currentScene.addEventListener('touchstart', function() {
+			self.exit();
+		});
 	},
 	
 	/**
@@ -224,6 +226,7 @@ var TitleState = Class.create({
 	 * @memberOf TitleState
 	 */
 	exit: function() {
+		game.currentScene.clearEventListener('touchstart');
 		this._background.ontouchstart = function() {};
 		this._background.tl.fadeTo(0, game.fps / 2).then(function() {
 			game.currentScene.removeChild(this);
