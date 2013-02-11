@@ -1,4 +1,15 @@
+/**
+ * 画面上の豚クラス
+ * @class
+ * @extends Group
+ */
 var Pig = Class.create(Group, {
+	
+	/**
+	 * コンストラクタ
+	 * @function
+	 * @memberOf Pig
+	 */
 	initialize: function() {
 		Group.call(this);
 		this.width = 320;

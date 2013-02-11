@@ -1,5 +1,18 @@
+/**
+ * 矢印ボタンクラス
+ * 豚が隠れる場所を決めるボタン
+ * @class
+ * @extends Sprite
+ * @property {文字列} direction 矢印が示す方向(left/center/right)
+ */
 var PositionButton = Class.create(Sprite, {
 	direction: '',
+	
+	/**
+	 * コンストラクタ
+	 * @function
+	 * @memberOf PositionButton
+	 */
 	initialize: function(direction) {
 		Sprite.call(this);
 		this.width = 154;
@@ -8,6 +21,11 @@ var PositionButton = Class.create(Sprite, {
 		this.direction = direction;
 	},
 	
+	/**
+	 * タッチされた時の処理
+	 * @function
+	 * @memberOf PositionButton
+	 */
 	ontouchstart: function() {
 		var house = game.houses[this.direction];
 		this.y += 5;
@@ -22,6 +40,11 @@ var PositionButton = Class.create(Sprite, {
 		game.pig = pig;
 	},
 	
+	/**
+	 * 指が離れた時の処理
+	 * @function
+	 * @memberOf PositionButton
+	 */
 	ontouchend: function() {
 		this.y -= 5;
 		this.image = game.assets['img/' + this.direction + '_button.png'];

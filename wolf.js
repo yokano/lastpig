@@ -1,3 +1,15 @@
+/**
+ * オオカミクラス
+ * @class
+ * @extends Group
+ * @property {数値} _highTensionSpeed タップされている時のアニメーション１ループにかかる時間
+ * @property {数値} _lowTensionSpeed タップされていない時のアニメーション１ループにかかる時間
+ * @property {Sprite} _tail 尻尾
+ * @property {Sprite} _armLeft 左手
+ * @property {Sprite} _armRight 右手
+ * @property {Sprite} _browLeft 左眉毛
+ * @property {Sprite} _browRight 右眉毛
+ */
 var Wolf = Class.create(Group, {
 	_highTensionSpeed: 0,
 	_lowTensionSpeed: 0,
@@ -6,6 +18,12 @@ var Wolf = Class.create(Group, {
 	_armRight: null,
 	_browLeft: null,
 	_browRight: null,
+	
+	/**
+	 * コンストラクタ
+	 * @function
+	 * @memberOf Wolf
+	 */
 	initialize: function() {
 		Group.call(this);
 		this.height = 250;
@@ -150,6 +168,11 @@ var Wolf = Class.create(Group, {
 		this.addChild(drool);
 	},
 	
+	/**
+	 * タッチされた時の処理
+	 * @function
+	 * @memberOf Wolf
+	 */
 	ontouchstart: function() {
 		this.setAnimation(this._highTensionSpeed);
 		this._tail.setAnimation(this._highTensionSpeed);
@@ -159,6 +182,11 @@ var Wolf = Class.create(Group, {
 		this._browRight.rotation = 45;
 	},
 	
+	/**
+	 * 指が離れた時の処理
+	 * @function
+	 * @memberOf Wolf
+	 */
 	ontouchend: function() {
 		this.setAnimation(this._lowTensionSpeed);
 		this._tail.setAnimation(this._lowTensionSpeed);

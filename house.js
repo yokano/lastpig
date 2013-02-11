@@ -1,9 +1,24 @@
+/**
+ * 家クラス
+ * 豚が隠れる家
+ * @class
+ * @extends Sprite
+ * @property {真理値} hasPig trueなら豚が隠れている
+ * @property {真理値} checkable trueならタップすると豚がいるか調べられる
+ * @property {真理値} openable trueならタップすると家を吹き飛ばせる
+ * @property {文字列} direction 家の場所を表す文字列(left/center/right)
+ */
 var House = Class.create(Sprite, {
 	hasPig: false,
 	checkable: false,
 	openable: false,
 	direction: '',
 	
+	/**
+	 * コンストラクタ
+	 * @function
+	 * @memberOf House
+	 */
 	initialize: function(direction) {
 		Sprite.call(this);
 		this.width = 273;
@@ -12,6 +27,11 @@ var House = Class.create(Sprite, {
 		this.direction = direction;
 	},
 	
+	/**
+	 * タッチされた時の処理
+	 * @function
+	 * @memberOf House
+	 */
 	ontouchstart: function() {
 		if(this.checkable) {
 			if(this.hasPig) {
@@ -25,10 +45,11 @@ var House = Class.create(Sprite, {
 		}
 	},
 	
-	hasBlown: function() {
-		this.tl.rotateBy(360 * 2, game.fps / 2).and().moveTo(this.x, -this.height, game.fps / 2);
-	},
-	
+	/**
+	 * 吹き飛ばされら時のアニメーション
+	 * @function
+	 * @memberOf House
+	 */
 	open: function() {
 		this.tl.rotateBy(360 * 2, game.fps / 2).and().moveTo(this.x, -this.height, game.fps / 2);
 	}

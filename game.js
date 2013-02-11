@@ -111,6 +111,7 @@ var TitleState = Class.create({
 	 * @memberOf TitleState
 	 */
 	enter: function() {
+		this._positionButtons = {};
 	
 		// 狼
 		var wolf = new Wolf();
@@ -154,15 +155,11 @@ var TitleState = Class.create({
 /**
  * 豚の隠れ場所を入力するステート
  * @class
- * @property {Sprite} _leftButton 左矢印ボタン
- * @property {Sprite} _centerButton 中央矢印ボタン
- * @property {Sprite} _rightButton 右矢印ボタン
+ * @property {Object(Sprite)} _positionButtons 矢印ボタンのオブジェクト。_positionButtons[left/center/right]
  * @property {String} selected 豚プレイヤーが選んだ隠れ場所の方向(left/center/right)
  */
 var SetPositionState = Class.create({
-	_leftButton: null,
-	_centerButton: null,
-	_rightButton: null,
+	_positionButtons: null,
 	selected: false,
 	
 	/**
@@ -172,6 +169,7 @@ var SetPositionState = Class.create({
 	 */
 	enter: function() {
 		this.selected = false;
+		this._positionButtons = {};
 		
 		// 家
 		game.houses = {};
@@ -186,39 +184,45 @@ var SetPositionState = Class.create({
 		}
 		
 		// 位置ボタン
-		var leftButton = new PositionButton('left');
-		leftButton.x = 50;
-		leftButton.y = -leftButton.height;
-		leftButton.tl.moveBy(0, leftButton.height, game.fps);
-		game.rootScene.addChild(leftButton);
-		this._leftButton = leftButton;
-
-		var centerButton = new PositionButton('center');
-		centerButton.x = 200;
-		centerButton.y = -centerButton.height;
-		centerButton.tl.moveBy(0, centerButton.height, game.fps);
-		game.rootScene.addChild(centerButton);
-		this._centerButton = centerButton;
-		
-		var rightButton = new PositionButton('right');
-		rightButton.x = 350;
-		rightButton.y = -rightButton.height;
-		rightButton.tl.moveBy(0, rightButton.height, game.fps);
-		game.rootScene.addChild(rightButton);
-		this._rightButton = rightButton;
+		for(var i = 0; i < 3; i++) {
+			var direction = directions[i];
+			var button = new PositionButton(direction);
+			button.x = (game.width - 3 * button.width) / 2 + button.width * i;
+			button.y = button.height;
+			game.rootScene.addChild(button);
+			this._positionButtons[direction] = button;
+		}
 	},
 	
+	/**
+	 * ステートが終了する直前の処理
+	 * @function
+	 * @memberOf SetPositionState
+	 */
 	exit: function() {
-		this._leftButton.tl.moveBy(0, -this._leftButton.height, game.fps);
-		this._centerButton.tl.moveBy(0, -this._centerButton.height, game.fps);
-		this._rightButton.tl.moveBy(0, -this._rightButton.height, game.fps);
+		for(var direction in this._positionButtons) {
+			var button = this._positionButtons[direction];
+			button.tl.moveTo(button.x, -button.y, game.fps).removeFromScene();
+		}
 		game.changeState(CheckPositionState);
 	}
 });
 
+/**
+ * オオカミが家を調べるステート
+ * @class
+ * @property {数値} checkedCount 家を調べた回数
+ * @property {Sprite} _callButton 豚の鳴き声ボタン
+ */
 var CheckPositionState = Class.create({
 	checkedCount: 0,
 	_callButton: null,
+	
+	/**
+	 * ステート開始直後の処理
+	 * @function
+	 * @memberOf CheckPositionState
+	 */
 	enter: function() {
 		var callButton = new CallButton();
 		game.rootScene.addChild(callButton);
@@ -228,6 +232,11 @@ var CheckPositionState = Class.create({
 		this.startCheck();
 	},
 	
+	/**
+	 * 家をタップして調べることができるようにする
+	 * @function
+	 * @memberOf CheckPositionState
+	 */
 	startCheck: function() {
 		for(var i = 0; i < 3; i++) {
 			var direction = ['left', 'center', 'right'][i];
@@ -235,6 +244,11 @@ var CheckPositionState = Class.create({
 		}
 	},
 	
+	/**
+	 * 家のタップが完了した時の処理
+	 * @function
+	 * @memberOf CheckPositionState
+	 */
 	checked: function() {
 		this.checkedCount++;
 		if(this.checkedCount >= config.checkLimit) {
@@ -242,6 +256,11 @@ var CheckPositionState = Class.create({
 		}
 	},
 	
+	/**
+	 * シーン終了直前の処理
+	 * @function
+	 * @memberOf CheckPositionState
+	 */
 	exit: function() {
 		for(var direction in game.houses) {
 			game.houses[direction].checkable = false;
@@ -251,13 +270,28 @@ var CheckPositionState = Class.create({
 	}
 });
 
+/**
+ * 吹き飛ばす家を選ぶステート
+ * @class
+ */
 var OpenState = Class.create({
+
+	/**
+	 * ステート開始時の処理
+	 * @function
+	 * @memberOf OpenState
+	 */
 	enter: function() {
 		for(var direction in game.houses) {
 			game.houses[direction].openable = true;
 		}
 	},
 	
+	/**
+	 * 家が吹き飛ばされた時の処理
+	 * @function
+	 * @memberOf OpenState
+	 */
 	hasOpend: function(answer) {
 		game.answer = answer;
 		for(var direction in game.houses) {
@@ -266,12 +300,26 @@ var OpenState = Class.create({
 		this.exit();
 	},
 	
+	/**
+	 * ステートが終了した時の処理
+	 * @function
+	 * @memberOf OpenState
+	 */
 	exit: function() {
 		game.changeState(ResultState);
 	}
 });
 
+/**
+ * 結果表示ステート
+ * @class
+ */
 var ResultState = Class.create({
+	/**
+	 * ステート開始時の処理
+	 * @function
+	 * @memberOf ResultState
+	 */
 	enter: function() {
 		if(game.answer == game.pig.direction) {
 			console.log('オオカミの勝ち');
@@ -281,6 +329,11 @@ var ResultState = Class.create({
 		this.exit();
 	},
 	
+	/**
+	 * ステート終了直前の処理
+	 * @function
+	 * @memberOf ResultState
+	 */
 	exit: function() {
 		game.currentScene.tl.delay(game.fps * 2).then(function() {
 			game.currentScene.removeChild(game.wolf);
