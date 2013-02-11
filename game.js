@@ -122,6 +122,7 @@ var Game = Class.create(Core, {
 		}
 		balloon.width = balloon.image.width;
 		balloon.height = balloon.image.height;
+		balloon.opacity = 0;
 		group.addChild(balloon);
 		
 		// メッセージ
@@ -131,9 +132,10 @@ var Game = Class.create(Core, {
 			label.text = messages[i];
 			label.font = '50px "ヒラギノ丸ゴ", "Hiragino Maru Gothic Pro", "メイリオ", Meiryo, sans-serif';
 			label.x = 50;
-			label.y = 20 + 75 * i;
+			label.y = 100 + 75 * i;
 			label.width = balloon.width - 50;
 			label.height = balloon.height - 20;
+			label.opacity = 0;
 			group.addChild(label);
 		}
 		
@@ -141,8 +143,9 @@ var Game = Class.create(Core, {
 		var next = new Sprite(100, 110);
 		next.image = game.assets['img/next.png'];
 		next.x = balloon.width - next.width - 10;
-		next.y = balloon.height - next.height - 100;
+		next.y = balloon.height - next.height - 75;
 		next.tl.moveBy(0, -30, game.fps / 2, CUBIC_EASEOUT).moveBy(0, 30, game.fps / 2, CUBIC_EASEIN).loop();
+		next.opacity = 0;
 		group.addChild(next);
 		
 		// タップしたら閉じる
@@ -164,6 +167,12 @@ var Game = Class.create(Core, {
 		group.x = game.width / 2 - balloon.width / 2;
 		group.y = game.height / 2 - balloon.height / 2;
 		game.currentScene.addChild(group);
+		
+		// ゆっくり表示
+		for(var i = 0; i < group.childNodes.length; i++) {
+			var node = group.childNodes[i];
+			node.tl.fadeIn(game.fps / 2);
+		}
 	}
 });
 
