@@ -14,12 +14,15 @@ window.onload = function() {
  * @property {Pig} pig 画面上の豚
  * @property {String} answer オオカミが選んだ家(left/center/right)
  * @property {Wolf} wolf 画面下のオオカミ
+ * @property {Array} messages メッセージキュー。連続して出力したいメッセージをpushする。
+ * game.messages.push({lines:['1行目', '2行目', '3行目'], from:'wolf'});
  */
 var Game = Class.create(Core, {
 	state: null,
 	pig: null,
 	answer: '',
 	wolf: null,
+	messages: [],
 	
 	/**
 	 * コンストラクタ
@@ -101,78 +104,95 @@ var Game = Class.create(Core, {
 	},
 	
 	/**
-	 * メッセージの表示
+	 * すべてのメッセージを順番に表示する
 	 * @function
 	 * @memberOf Game
-	 * @param {配列(文字列)} messages 表示するメッセージ配列。要素１つが１行に表示される。
-	 * @param {文字列} from 'wolf'ならオオカミ、'pig'ならブタ、'both'または省略したら両方から吹き出す
-	 * @param {関数} callback メッセージを閉じた時に呼び出す関数。省略可能。
 	 */
-	message: function(messages, from, callback) {
-		var group = new Group();
-		
-		// 吹き出し
-		var balloon = new Sprite();
-		if(from == 'wolf') {
-			balloon.image = game.assets['img/message_wolf.png'];
-		} else if(from == 'pig') {
-			balloon.image = game.assets['img/message_pig.png'];
-		} else {
-			balloon.image = game.assets['img/message_both.png'];
-		}
-		balloon.width = balloon.image.width;
-		balloon.height = balloon.image.height;
-		balloon.opacity = 0;
-		group.addChild(balloon);
-		
-		// メッセージ
-		for(var i = 0; i < messages.length; i++) {
-			var label = new Label();
-			label.color = 'black';
-			label.text = messages[i];
-			label.font = '50px "ヒラギノ丸ゴ", "Hiragino Maru Gothic Pro", "メイリオ", Meiryo, sans-serif';
-			label.x = 50;
-			label.y = 100 + 75 * i;
-			label.width = balloon.width - 50;
-			label.height = balloon.height - 20;
-			label.opacity = 0;
-			group.addChild(label);
-		}
-		
-		// 矢印
-		var next = new Sprite(100, 110);
-		next.image = game.assets['img/next.png'];
-		next.x = balloon.width - next.width - 10;
-		next.y = balloon.height - next.height - 75;
-		next.tl.moveBy(0, -30, game.fps / 2, CUBIC_EASEOUT).moveBy(0, 30, game.fps / 2, CUBIC_EASEIN).loop();
-		next.opacity = 0;
-		group.addChild(next);
-		
-		// タップしたら閉じる
-		group.ontouchstart = function() {
-			for(var i = 0; i < this.childNodes.length; i++) {
-				this.childNodes[i].tl.clear().fadeOut(game.fps / 2);
+	showMessages: function(callback) {
+		// １組のメッセージを表示する
+		var show = function(message, callback) {
+			var lines = message.lines;
+			var from = message.from;
+
+			var group = new Group();
+			
+			// 吹き出し
+			var balloon = new Sprite();
+			if(from == 'wolf') {
+				balloon.image = game.assets['img/message_wolf.png'];
+			} else if(from == 'pig') {
+				balloon.image = game.assets['img/message_pig.png'];
+			} else {
+				balloon.image = game.assets['img/message_both.png'];
+			}
+			balloon.width = balloon.image.width;
+			balloon.height = balloon.image.height;
+			balloon.opacity = 0;
+			group.addChild(balloon);
+			
+			// メッセージを表示
+			for(var i = 0; i < lines.length; i++) {
+				var label = new Label();
+				label.color = 'black';
+				label.text = lines[i];
+				label.font = '40px "ヒラギノ丸ゴ", "Hiragino Maru Gothic Pro", "メイリオ", Meiryo, sans-serif';
+				label.x = 50;
+				label.y = 100 + 75 * i;
+				label.width = balloon.width - 50;
+				label.height = balloon.height - 20;
+				label.opacity = 0;
+				group.addChild(label);
 			}
 			
-			this.tl.delay(game.fps / 2).removeFromScene().then(function() {
-				if(callback != undefined) {
-					callback();
+			// 矢印
+			var next = new Sprite(100, 110);
+			next.image = game.assets['img/next.png'];
+			next.x = balloon.width - next.width - 10;
+			next.y = balloon.height - next.height - 75;
+			next.tl.moveBy(0, -30, game.fps / 2, CUBIC_EASEOUT).moveBy(0, 30, game.fps / 2, CUBIC_EASEIN).loop();
+			next.opacity = 0;
+			group.addChild(next);
+			
+			// 画面に追加
+			group.width = balloon.width;
+			group.height = balloon.height;
+			group.x = game.width / 2 - balloon.width / 2;
+			group.y = game.height / 2 - balloon.height / 2;
+			game.currentScene.addChild(group);
+			
+			// ゆっくり表示
+			for(var i = 0; i < group.childNodes.length; i++) {
+				var node = group.childNodes[i];
+				node.tl.fadeIn(game.fps / 2);
+			}
+			
+			// タップしたら閉じる
+			group.ontouchstart = function() {
+				for(var i = 0; i < this.childNodes.length; i++) {
+					this.childNodes[i].tl.clear().fadeOut(game.fps / 2);
 				}
-			});
-		}
+				
+				this.tl.delay(game.fps / 2).removeFromScene().then(function() {
+					if(callback != undefined) {
+						callback();
+					}
+				});
+			}
+		};
 		
-		// 画面に追加
-		group.width = balloon.width;
-		group.height = balloon.height;
-		group.x = game.width / 2 - balloon.width / 2;
-		group.y = game.height / 2 - balloon.height / 2;
-		game.currentScene.addChild(group);
-		
-		// ゆっくり表示
-		for(var i = 0; i < group.childNodes.length; i++) {
-			var node = group.childNodes[i];
-			node.tl.fadeIn(game.fps / 2);
+		// すべてのメッセージ表示処理を順番に実行して最後にcallbackを呼ぶ
+		var f = callback;
+		for(var i = game.messages.length - 1; i >= 0; i--) {
+			f = function() {
+				var message = game.messages[i];
+				var g = f;
+				return function() {
+					show(message, g);
+				};
+			}();
 		}
+		f();
+		game.messages = [];
 	}
 });
 
@@ -204,7 +224,7 @@ var TitleState = Class.create({
 			game.currentScene.addChild(pig);
 			game.pig = pig;
 		}
-	
+		
 		// タイトルロゴ
 		var self = this;
 		var background = new Sprite(743, 277);
@@ -213,7 +233,7 @@ var TitleState = Class.create({
 		background.image = game.assets['img/title_background.png'];
 		this._background = background;
 		game.currentScene.addChild(this._background);
-		
+				
 		// タッチしたらゲーム開始
 		game.currentScene.addEventListener('touchstart', function() {
 			self.exit();
@@ -267,6 +287,20 @@ var SetPositionState = Class.create({
 			game.currentScene.addChild(game.houses[direction]);
 		}
 		
+		game.messages.push({
+			lines: ['おなかがすいた・・・', 'おっ！', 'あんなところにブタがいるぞ！'],
+			from: 'wolf'
+		});
+		game.messages.push({
+			lines: ['いえのなかにかくれるブー！', 'オオカミに見られないように', 'てでかくしてボタンをおすブー！'],
+			from: 'pig'
+		});
+		game.showMessages(function() {
+			console.log('All messages have showed.');
+		});
+	},
+	
+	showPositionButtons: function() {
 		// 位置ボタン
 		for(var i = 0; i < 3; i++) {
 			var direction = directions[i];
