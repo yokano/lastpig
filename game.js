@@ -145,10 +145,12 @@ var Game = Class.create(Core, {
 			}
 			
 			// 矢印
-			var next = new Sprite(100, 110);
+			var next = new Sprite();
 			next.image = game.assets['img/next.png'];
+			next.width = next.image.width;
+			next.height = next.image.height;
 			next.x = balloon.width - next.width - 10;
-			next.y = balloon.height - next.height - 75;
+			next.y = balloon.height - next.height * 2 -10;
 			next.tl.moveBy(0, -30, game.fps / 2, CUBIC_EASEOUT).moveBy(0, 30, game.fps / 2, CUBIC_EASEIN).loop();
 			next.opacity = 0;
 			group.addChild(next);
@@ -295,13 +297,15 @@ var SetPositionState = Class.create({
 			lines: ['いえのなかにかくれるブー！', 'オオカミに見られないように', 'てでかくしてボタンをおすブー！'],
 			from: 'pig'
 		});
+		
 		game.showMessages(function() {
-			console.log('All messages have showed.');
+			game.state.showPositionButtons();
 		});
 	},
 	
 	showPositionButtons: function() {
 		// 位置ボタン
+		var directions = ['left', 'center', 'right'];
 		for(var i = 0; i < 3; i++) {
 			var direction = directions[i];
 			var button = new PositionButton(direction);
