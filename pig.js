@@ -121,5 +121,6 @@ var Pig = Class.create(Group, {
 	 * @memberOf Pig
 	 */
 	show: function() {
+		
 	}
 });

@@ -221,11 +221,9 @@ var TitleState = Class.create({
 		game.wolf = wolf;
 
 		// 豚
-		if(game.pig == null || game.pig == undefined) {
-			var pig = new Pig();
-			game.currentScene.addChild(pig);
-			game.pig = pig;
-		}
+		var pig = new Pig();
+		game.currentScene.addChild(pig);
+		game.pig = pig;
 		
 		// タイトルロゴ
 		var self = this;
@@ -275,7 +273,6 @@ var SetPositionState = Class.create({
 	enter: function() {
 		this.selected = false;
 		this._positionButtons = {};
-		game.pig.hide();
 		
 		// 家
 		game.houses = {};
@@ -304,6 +301,8 @@ var SetPositionState = Class.create({
 	},
 	
 	showPositionButtons: function() {
+		game.pig.hide();
+		
 		// 位置ボタン
 		var directions = ['left', 'center', 'right'];
 		for(var i = 0; i < 3; i++) {
@@ -347,12 +346,32 @@ var CheckPositionState = Class.create({
 	 * @memberOf CheckPositionState
 	 */
 	enter: function() {
-		var callButton = new CallButton();
-		game.rootScene.addChild(callButton);
-		this._callButton = callButton;
+		game.messages.push({
+			lines: ['おっ！', 'こんなところに家があるぞ！', '中に誰かいないか調べよう！'],
+			from: 'wolf'
+		});
+		game.messages.push({
+			lines: ['３回調べることができるぞ！', 'びっくりさせて声を出させよう'],
+			from: 'wolf'
+		});
+		game.messages.push({
+			lines: ['誰かきたみたいだブー！', 'びっくりして声を出したら', 'バレちゃうブー！'],
+			from: 'pig'
+		});
+		game.messages.push({
+			lines: ['わざと声を出してごまかすブー！', 'ボタンを押したら鳴き声を出すブー！'],
+			from: 'pig'
+		});
 		
-		this.checkedCount = 0;
-		this.startCheck();
+		var self = this;
+		game.showMessages(function() {
+			var callButton = new CallButton();
+			game.rootScene.addChild(callButton);
+			self._callButton = callButton;
+			
+			self.checkedCount = 0;
+			self.startCheck();
+		});
 	},
 	
 	/**
@@ -361,6 +380,12 @@ var CheckPositionState = Class.create({
 	 * @memberOf CheckPositionState
 	 */
 	startCheck: function() {
+		game.messages.push({
+			lines: ['よし！' + (this.checkedCount + 1) + '回目だ！', '家をタッチするぞ！', 'ブタが入っていれば声を出すはず！'],
+			from: 'wolf'
+		});
+		game.showMessages();
+		
 		for(var i = 0; i < 3; i++) {
 			var direction = ['left', 'center', 'right'][i];
 			game.houses[direction].checkable = true;
@@ -376,6 +401,12 @@ var CheckPositionState = Class.create({
 		this.checkedCount++;
 		if(this.checkedCount >= config.checkLimit) {
 			this.exit();
+		} else {
+			for(var i = 0; i < 3; i++) {
+				var direction = ['left', 'center', 'right'][i];
+				game.houses[direction].checkable = false;
+			}
+			this.startCheck();
 		}
 	},
 	
@@ -405,6 +436,16 @@ var OpenState = Class.create({
 	 * @memberOf OpenState
 	 */
 	enter: function() {
+		game.messages.push({
+			lines: ['豚がいるのは間違いないな', '家を吹き飛ばして妻構えてやる', 'いえは１つしか吹き飛ばせないぞ'],
+			from: 'wolf'
+		});
+		game.messages.push({
+			lines: ['吹き飛ばす家にタッチしてね'],
+			from: 'wolf'
+		});
+		game.showMessages();
+		
 		for(var direction in game.houses) {
 			game.houses[direction].openable = true;
 		}
@@ -445,10 +486,17 @@ var ResultState = Class.create({
 	 */
 	enter: function() {
 		if(game.answer == game.pig.direction) {
-			console.log('オオカミの勝ち');
+			game.messages.push({
+				lines: ['オオカミの勝ち！'],
+				from: 'wolf'
+			});
 		} else {
-			console.log('ブタの勝ち');
+			game.messages.push({
+				lines: ['ブタの勝ち！'],
+				from: 'pig'
+			});
 		}
+		game.showMessages();
 		this.exit();
 	},
 	
